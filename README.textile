@@ -29,6 +29,11 @@ all of the inputs that have a class as defined by the 'data' parameter will be i
 
 so you can have multiple fields & still use a live search form
 
+<h4>To allow search to be triggered</h4>
+ You can do it using 
+$.searchbox.process();
+
+
 h3. Usage
 
 <pre><code>$('input.search').searchbox()</code></pre>
