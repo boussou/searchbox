@@ -1,6 +1,33 @@
 h1. Searchbox
 
 This is a jQuery plugin that turns any textbox into a live search, or a "searchbox".
+For previous documentation, see below
+
+<h3>ADDED JSON response handling & multiple input fields handling  & processing through jquery tmpl </h3>
+(http://ejohn.org/blog/javascript-micro-templating/ & one of its forks like https://github.com/BorisMoore/jquery-tmpl)
+
+changes: data & tmpl
+- data : jquery selector for collecting data to submit
+- tmpl : if you use the john resig tmpl, & the server returns back JSON, then it is evaluated for every row
+now you can call it like this:
+<pre>
+$('input.search').searchbox({
+  url: your_url,
+  param: 'q',
+  dom_id: '#resultTable',
+  delay: 250,
+  data: 'input.search',
+  tmpl: '<tr> <td>${brand} </td>    <td>${model} </td>  </tr>'
+})
+</pre>
+
+if you have inputs like this:
+<pre>    <input type="text" id=brand class="form-control search">
+    <input type="text" id=model class="form-control search"></pre>
+then you will receive on the server a GET request with values as: brand=value&model=value
+all of the inputs that have a class as defined by the 'data' parameter will be included.
+
+so you can have multiple fields & still use a live search form
 
 h3. Usage
 
