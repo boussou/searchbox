@@ -3,6 +3,7 @@
 
 /**
 ADDED JSON response handling & multiple input fields handling  & processing through jquery tmpl (http://ejohn.org/blog/javascript-micro-templating/ & one of its forks like https://github.com/BorisMoore/jquery-tmpl)
+Added updates from others forks.
 
 changes: data & tmpl
 - data : jquery selector for collecting data to submit
@@ -36,10 +37,12 @@ so you can have multiple fields & still use a live search form
       url: '/search',
       param: 'query',
       dom_id: '#results',
+      total_dom_id: '#total',
       delay: 100,
       loading_css: '#loading',
       data: null,
-      tmpl: null
+      tmpl: null,
+      characters: 3
     },
     
     loading: function() {
@@ -55,6 +58,14 @@ so you can have multiple fields & still use a live search form
     },
     
     process: function(terms) {
+        
+        //Added a check for 'blank', so search is not triggered on empty string…
+       if(terms)
+       { 
+        var blank_check = terms.replace(/\s/g, '');
+        if(blank_check == ''){return false;}  
+       }
+       
       var path = $.searchbox.settings.url.split('?'),
         query = [$.searchbox.settings.param, '=', terms].join(''),
         base = path[0], params = path[1], query_string = query
@@ -71,6 +82,11 @@ so you can have multiple fields & still use a live search form
           data: alldata,
           url: [base, '?', query_string].join(''),
           success: function(data) {
+               records_info=data.pop();
+//               records_info.total
+//               records_info.offset 
+//               records_info.size
+               $($.searchbox.settings.total_dom_id).html( records_info.total );
                $($.searchbox.settings.dom_id).html( $.tmpl($.searchbox.settings.tmpl, data) );
           }
         })
@@ -109,7 +125,13 @@ so you can have multiple fields & still use a live search form
       .ajaxStart(function() { $.searchbox.start() })
       .ajaxStop(function() { $.searchbox.stop() })
       .keyup(function() {
-        if ($input.val() != this.previousValue) {
+        
+        if ($input.val() != this.previousValue && 
+        //starts when  x characters typed
+        ($input.val().length >= $.searchbox.settings.characters
+        //except if character removed
+         || this.previousValue==null || this.previousValue.length>$input.val().length)
+        ) {    
           $.searchbox.resetTimer(this.timer)
 
           this.timer = setTimeout(function() {  
